@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Ask'ME</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 40px auto;
+      max-width: 600px;
+      background: #f9f9f9;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+    }
+    h1, h2 {
+      text-align: center;
+      color: #333;
+    }
+    form {
+      margin-bottom: 30px;
+    }
+    input[type="text"], textarea {
+      width: 100%;
+      padding: 12px;
+      margin-top: 8px;
+      margin-bottom: 10px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      box-sizing: border-box;
+    }
+    button {
+      background-color: #007bff;
+      color: white;
+      padding: 10px 18px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+    .post {
+      background: white;
+      padding: 12px 16px;
+      margin: 10px 0;
+      border-radius: 6px;
+      border-left: 4px solid #007bff;
+    }
+    .post p {
+      margin: 0;
+    }
+    .post span {
+      font-weight: bold;
+      color: #007bff;
+    }
+  </style>
+</head>
+<body>
+  <h1>Ask'ME</h1>
+
+  <form method="POST" action="/login" id="loginForm">
+    <label for="username"><strong>Login</strong></label>
+    <input type="text" name="username" placeholder="Enter your username" required />
+    <button type="submit">Login</button>
+  </form>
+
+  <form method="POST" action="/post" id="postForm" style="display: none;">
+    <label for="content"><strong>Create a Post</strong></label>
+    <textarea name="content" rows="4" placeholder="What's on your mind?" required></textarea>
+    <button type="submit">Post</button>
+  </form>
+
+  <form method="GET" action="/logout" id="logoutForm" style="display: none;">
+    <button type="submit">Logout</button>
+  </form>
+
+  <h2>Recent Posts</h2>
+  <div id="posts"></div>
+
+  <script>
+    fetch('/session')
+      .then(res => res.json())
+      .then(data => {
+        if (data.loggedIn) {
+          document.getElementById('loginForm').style.display = 'none';
+          document.getElementById('postForm').style.display = 'block';
+          document.getElementById('logoutForm').style.display = 'block';
+        }
+      });
+
+    fetch('/posts')
+      .then(res => res.json())
+      .then(data => {
+        const postsDiv = document.getElementById('posts');
+        data.forEach(post => {
+          const div = document.createElement('div');
+          div.className = 'post';
+          div.innerHTML = '<span>' + post.username + '</span><p>' + post.content + '</p>';
+          postsDiv.appendChild(div);
+        });
+      });
+  </script>
+</body>
+</html>
